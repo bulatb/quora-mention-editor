@@ -10,4 +10,7 @@ Interested? [Grab the bookmarklet](http://bochkariov.com/quora/edit-mentions) an
 * Ask in [Mention Editor Bookmarklet](http://quora.com/Mention-Editor-Bookmarklet) on [Quora](http://quora.com).
 
 ## Changelog
-This is version 1.0.
+This is version 1.1. Older versions are available [here](https://github.com/bulatb/quora-mention-editor/tags).
+
+### Changes in 1.1
+* Fixed UI problems caused by [the April 11, 2012 update](http://www.quora.com/productupdates/Launch-of-redesigned-header) to Quora.

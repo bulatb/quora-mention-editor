@@ -19,7 +19,7 @@
     /**
      * Version number, used to check for updates.
      */
-    var version = '1.0',
+    var version = '1.1',
     
         /**
          * Where to check for updates.
@@ -40,14 +40,13 @@
                 'background-position': '10px top'
             },
             prompt: {
-                'box-shadow': '1px 2px 2px #777',
-                padding: '8px',
+                background: '#fff',
+                padding: '11px',
                 width: 'auto'
             },
             inputField: {
-                background: '#f7f7f7',
-                border: '0',
-                'border-radius': '0',
+                background: '#f9f9f9',
+                border: '1px solid #ccc',
                 display: 'block',
                 padding: '2px'
             },
@@ -64,8 +63,12 @@
                     display: 'inline',
                 },
                 'controls:hover a:last-child:hover': {
-                    color: '#fff',
+                    color: '#19558D',
                     'text-decoration': 'none'
+                },
+                'controls a:focus': {
+                    border: '0',
+                    outline: 'none'
                 },
             help: {
                 display: 'none',
@@ -135,7 +138,7 @@
      * Selectors are transformed as follows:
      *
      *     'top descendant > child' -> '#{namespace}top descendant > child'
-     *     'top #id.class:pseudo'   -> '#{namespace}top #id.class:pseudo'
+     *     'top #id.class:pseudo'   -> '#{namespace}top #id.class:pseduo'
      *     '.top > child[prop=val]  -> '.{namespace}top > child[prop=val]'
      *     '#note .this .case'      -> '#{namespace}#note .this .case'
      *
@@ -220,7 +223,7 @@
      *
      * It takes an arbitrary DOM node and tries to determine if it could be part
      * of a focused mention in Quora's rich-text editor. On success, it returns
-     * the mention link wrapped in jQuery; otherwise it returns an empty
+     * the mention link wrapped in jQuery; otherwise returns an empty
      * collection. See body comments for details.
      *
      * The relatively nice form you see now (and the existence of this function 
@@ -238,7 +241,7 @@
      *  3. There might be a weird case where two links are adjacent and the user
      *     clicks right between them, but if that happens then it's not even 
      *     clear which one they wanted. The highlight will tell them which one 
-     *     they're editing, so they can always just cancel and find a better 
+     *     they;re editing, so they can always just cancel and find a better 
      *     place to click.
      */
     function getFocusedLink(focusedNode) {
@@ -313,8 +316,7 @@
      *   http://jsperf.com/mention-editor-html-templating
      *
      * Turns out the oft-touted .split().join() is relatively butt-slow. And 
-     * this could be twice as fast if I used %ns% everywhere, but let's save
-     * that for later.
+     * yeah, this could be twice as fast if I used %ns% everywhere.
      */
     function tooltipHtml(namespace) {
         return (
