@@ -40,7 +40,7 @@
                 'background-position': '10px top'
             },
             prompt: {
-                background: '#fff',
+                background: '#fdfdfd',
                 padding: '11px',
                 width: 'auto'
             },
