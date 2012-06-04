@@ -19,7 +19,7 @@
     /**
      * Version number, used to check for updates.
      */
-    var version = '1.1',
+    var version = '1.2',
     
         /**
          * Where to check for updates.
