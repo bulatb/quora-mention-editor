@@ -46,7 +46,7 @@
             },
             inputField: {
                 background: '#f9f9f9',
-                border: '1px solid #ccc',
+                border: '1px solid #bbb',
                 display: 'block',
                 padding: '2px'
             },
@@ -84,7 +84,7 @@
                 'float': 'left',
                 margin: '-1px 10px 0 0',
                 'min-width': '0',
-                padding: '2px 10px'
+                padding: '1px 8px'
             },
             cancelButton: {
                 'font-size': '0.97em',
@@ -314,15 +314,12 @@
      * If you like benchmarks, you might want to see this:
      *
      *   http://jsperf.com/mention-editor-html-templating
-     *
-     * Turns out the oft-touted .split().join() is relatively butt-slow. And 
-     * yeah, this could be twice as fast if I used %ns% everywhere.
      */
     function tooltipHtml(namespace) {
         return (
             '<div class="hover_menu">' +
                 '<div id="arrowNub" class="hover_menu_nub"></div>' +
-                '<div id="prompt" class="menu_contents growl_notification">' +
+                '<div id="prompt" class="hover_menu_contents">' +
                     '<input id="inputField" type="text" />' +
                     '<div id="controls">' +
                         '<a id="okButton" href="#" class="submit_button">Save</a>' +
@@ -421,7 +418,7 @@
         
         /* Now let's get down to business (to defeat the DOM). */
 
-        okButton = tooltip.find('.menu_contents').find('a').first();
+        okButton = tooltip.find('.hover_menu_contents').find('a').first();
         cancelButton = okButton.next();
         editorCancelButton = target.closest('.inline_editor_form').find('.inline_editor_cancel_button');
         helpToggle = tooltip.find(id('helpToggle'));
