@@ -1,11 +1,11 @@
 /**
- * A bookmarklet for editing mentions on Quora. Put your cursor in the mention 
+ * A bookmarklet for editing mentions on Quora. Put your cursor in the mention
  * text, click this in your bookmarks bar, and type your new text in the prompt.
  *
  * Support: Firefox 10+, Chrome 17+.
  * Note: IE9+, latest Safari, and older Chrome and Firefox are most likely fine,
- * but contentEditable behavior is too inconsistent across browsers for me to 
- * support every little thing for all of them. This strategy seems to mirror 
+ * but contentEditable behavior is too inconsistent across browsers for me to
+ * support every little thing for all of them. This strategy seems to mirror
  * Quora's own, so I think it makes sense for bookmarklets too.
  *
  * By the way, Chrome wins the prize for best-behaving contentEditable blocks.
@@ -20,19 +20,19 @@
      * Version number, used to check for updates.
      */
     var version = '1.2',
-    
+
         /**
          * Where to check for updates.
          */
         updateUrl = 'http://bochkariov.com/quora/edit-mentions/update?version=' + version,
-        
+
         /**
          * Where to report bugs.
          */
         issuesUrl = 'http://bochkariov.com/quora/edit-mentions/bugs?version=' + version,
-        
+
         /**
-         * CSS-like format for styling the prompt. Transformed to 
+         * CSS-like format for styling the prompt. Transformed to
          * namespaced CSS by the toCss() function.
          */
         styles = {
@@ -97,13 +97,13 @@
         focusedText = document.getSelection().focusNode,
         focusedLink = getFocusedLink(focusedText),
         originalText = focusedLink.text();
-        
+
         if (focusedLink.length !== 0) {
-            /* If something weird went down and an unexpected type of node was 
-             * selected, the check above will fail and nothing will happen. See 
+            /* If something weird went down and an unexpected type of node was
+             * selected, the check above will fail and nothing will happen. See
              * getFocusedLink() for details.
              *
-             * Because the prompt steals focus from the rich-text editor, this 
+             * Because the prompt steals focus from the rich-text editor, this
              * also doubles as a way to make the whole thing idempotent
              * without keeping any extra global state.
              */
@@ -122,9 +122,9 @@
         }
 
     /**
-     * Converts a CSS-like styling object to a string of namespaced CSS. This 
-     * version has been stripped down for performance and supports only the 
-     * most basic target strings. See goodies.js for a much more powerful 
+     * Converts a CSS-like styling object to a string of namespaced CSS. This
+     * version has been stripped down for performance and supports only the
+     * most basic target strings. See goodies.js for a much more powerful
      * version that supports anything allowed by CSS.
      *
      * Styling object format: {
@@ -142,48 +142,48 @@
      *     '.top > child[prop=val]  -> '.{namespace}top > child[prop=val]'
      *     '#note .this .case'      -> '#{namespace}#note .this .case'
      *
-     * ...and so on. Any selector that doesn't start with a dot is assumed to 
-     * select by ID and given a leading hash. Interior dots and hashes are NOT 
-     * replaced with namespaced equivalents, so this function won't help when 
+     * ...and so on. Any selector that doesn't start with a dot is assumed to
+     * select by ID and given a leading hash. Interior dots and hashes are NOT
+     * replaced with namespaced equivalents, so this function won't help when
      * namespaced elements need to reference each other.
      *
      * Most importantly: If you decide to borrow this function, be extra careful
-     * when using classes in rules that start with a namespaced ID.  A selector 
-     * like "#my_ns_widget .class" may not itself apply to anything outside 
-     * your widget, but that doesn't mean your .class{} rule won't clobber 
+     * when using classes in rules that start with a namespaced ID.  A selector
+     * like "#my_ns_widget .class" may not itself apply to anything outside
+     * your widget, but that doesn't mean your .class{} rule won't clobber
      * some global CSS.
      */
     function toCss(styles, namespace) {
         var css = '',
             ruleBody;
-        
+
         for (var selector in styles) {
             if (styles.hasOwnProperty(selector)) {
                 ruleBody = styles[selector];
-                
+
                 if (selector.charAt(0) === '.') {
                     css += selector.replace('.', '.' + namespace) + '{';
                 }
                 else {
                     css += '#' + namespace + selector + '{';
                 }
-                
+
                 for (var property in ruleBody) {
                     if (ruleBody.hasOwnProperty(property)) {
                         css += property + ':' + ruleBody[property] + ';';
                     }
                 }
-                
+
                 css += '}';
             }
         }
 
         return css;
     }
-    
+
     /**
-     * Puts the cursor (caret) at the end of a contentEditable element inside 
-     * Quora's rich-text editor. Requires browser support for text ranges and 
+     * Puts the cursor (caret) at the end of a contentEditable element inside
+     * Quora's rich-text editor. Requires browser support for text ranges and
      * window.getSelection().
      */
     function cursorToEnd(element) {
@@ -191,20 +191,20 @@
             range = document.createRange(),
             /* Behavior fix for Firefox. See below. */
             magicEndpieceNode = document.createTextNode('');
-        
+
         element.closest('.qtext_editor_content').focus();
         selection = window.getSelection();
-        
+
         if (selection.rangeCount > 0) {
             selection.removeAllRanges();
         }
-        
-        /* In Firefox, if the cursor is placed at the end of the mention link, 
-         * anything the user types after it becomes part of the link text. To 
-         * get around that quirk, follow the link with a dummy text node and 
+
+        /* In Firefox, if the cursor is placed at the end of the mention link,
+         * anything the user types after it becomes part of the link text. To
+         * get around that quirk, follow the link with a dummy text node and
          * put the cursor at the beginning of that. */
         $(magicEndpieceNode).insertAfter(element);
-        
+
         range.selectNodeContents(magicEndpieceNode);
         range.collapse(true);
         selection.addRange(range);
@@ -226,7 +226,7 @@
      * the mention link wrapped in jQuery; otherwise returns an empty
      * collection. See body comments for details.
      *
-     * The relatively nice form you see now (and the existence of this function 
+     * The relatively nice form you see now (and the existence of this function
      * itself) is the result of more than a little bit of trial, error, Firebug,
      * error, Google, and error.
      *
@@ -235,23 +235,23 @@
      *     fix this because the results are pretty funny (but harmless).
      *
      *  2. Assumes the selection didn't move between focusedNode being set and
-     *     the function being called. Not a hard fix, but the assumption holds 
+     *     the function being called. Not a hard fix, but the assumption holds
      *     for this bookmarklet anyway.
      *
      *  3. There might be a weird case where two links are adjacent and the user
-     *     clicks right between them, but if that happens then it's not even 
-     *     clear which one they wanted. The highlight will tell them which one 
-     *     they;re editing, so they can always just cancel and find a better 
+     *     clicks right between them, but if that happens then it's not even
+     *     clear which one they wanted. The highlight will tell them which one
+     *     they;re editing, so they can always just cancel and find a better
      *     place to click.
      */
     function getFocusedLink(focusedNode) {
         function cursorAtLeftEdge() {
             var cursorAtEdge = currentRange.endOffset === currentRange.endContainer.length,
                 nextNodeIsLink = $(currentRange.endContainer.nextSibling).is('a');
-            
+
             return cursorAtEdge && nextNodeIsLink;
         }
-        
+
         function cursorAtRightEdge() {
             var cursorAtEdge = currentRange.startOffset === 0,
                 /* For some reason, $(...startContainer).prev() fails here. */
@@ -259,11 +259,11 @@
 
             return cursorAtEdge && prevNodeIsLink;
         }
-        
+
         var wrappedNode = $(focusedNode),
             lowestParentLink = wrappedNode.closest('a'),
             currentRange = window.getSelection().getRangeAt(0);
-        
+
         if (focusedNode.nodeType === 3) {
             if (lowestParentLink.length === 0) {
                 /* Not a text node inside a link. Is the cursor at the end
@@ -293,20 +293,20 @@
             /* Focused node is a link. */
             return wrappedNode;
         }
-        
-        /* Here's where a fix for the Firefox focus-to-container problem might 
-         * go. I'm hoping this is a bug in Quora's mention builder, which would 
-         * be nice because then /my/ issue would be much more fixable. As much 
-         * as I hate to leave a UX problem open, I don't see what I can do 
+
+        /* Here's where a fix for the Firefox focus-to-container problem might
+         * go. I'm hoping this is a bug in Quora's mention builder, which would
+         * be nice because then /my/ issue would be much more fixable. As much
+         * as I hate to leave a UX problem open, I don't see what I can do
          * about it now.
          */
-         
+
         else {
             /* Some other kind of node is focused. Just ignore it. */
             return new jQuery.fn.init();
         }
     }
-    
+
     /**
      * HTML for the tooltip, salted with a namespace to avoid collisions with
      * Quora.
@@ -334,7 +334,7 @@
             '</div>'
         ).replace(/id="/g, 'id="' + namespace).replace(/%ns%/g, namespace);
     }
-    
+
     /**
      * Creates and places a (mostly) generic tooltip prompt with a text field,
      * Ok/Cancel buttons, and some bookmarklet-specific UI that it's kind of
@@ -344,7 +344,7 @@
      * target   - A jQuery-wrapped DOM node for the function to work on. In this
      *            case it's assumed to be a link.
      *
-     * onOk     - When the Ok button is clicked, this function is called with 
+     * onOk     - When the Ok button is clicked, this function is called with
      *            two arguments:
      *                onOk(target, input_field_value)
      *
@@ -358,43 +358,43 @@
      */
     function tooltipPrompt(target, onOk, onCancel, onKeyUp) {
         /**
-         * Builds a namespaced ID from the given string. Used for selecting 
+         * Builds a namespaced ID from the given string. Used for selecting
          * things with jQuery.
          */
         function id(semanticId) {
             return '#' + namespace + semanticId;
         }
-        
+
         /**
          * Just what it sounds like.
          */
         function placeTooltip() {
             var targetOffset = target.offset();
-            
+
             tooltip.css({
                 position: 'absolute',
                 top: targetOffset.top + target.outerHeight() + 2,
                 left: targetOffset.left
             });
         }
-        
+
         /**
          * Destroys the tooltip, cleans up event handlers, and returns focus
          * to the editor.
          */
         function cleanUp() {
-            tooltip.fadeOut('fast', function() {                
+            tooltip.fadeOut('fast', function() {
                 tooltip.remove();
                 $(id('style')).remove();
                 target.css({background: '#fff'});
 
                 cursorToEnd(target);
             });
-            
+
             editorCancelButton.unbind('.' + namespace);
             target.closest('.qtext_editor_content').unbind('.' + namespace);
         }
-        
+
         var namespace = 'qp_' + (+new Date()) + '__',
             tooltip = $(tooltipHtml(namespace)),
             inputField = tooltip.find('input'),
@@ -402,29 +402,29 @@
             cancelButton,
             editorCancelButton,
             helpToggle;
-        
+
         /* Add the tooltip before its behavior so everything looks fast.
          * But this is a dirty lie. Everything is not fast. */
-        
+
         $('head').append(
             $('<style type="text/css">' + toCss(styles, namespace) + '</style>', {id: namespace + 'style'})
         );
-        
+
         target.css({background: '#ffff80'});
-        
+
         placeTooltip();
         tooltip.appendTo('body');
         inputField.val(target.text()).select();
-        
+
         /* Now let's get down to business (to defeat the DOM). */
 
         okButton = tooltip.find('.hover_menu_contents').find('a').first();
         cancelButton = okButton.next();
         editorCancelButton = target.closest('.inline_editor_form').find('.inline_editor_cancel_button');
         helpToggle = tooltip.find(id('helpToggle'));
-        
+
         /* Behavior */
-        
+
         inputField.keyup(function(e) {
             if (e.which === 13) {
                 /* Enter key */
@@ -441,65 +441,65 @@
                 typeof onKeyUp === 'function' && onKeyUp(target, inputField.val());
             }
         });
-        
+
         okButton.click(function() {
             onOk(target, inputField.val());
             cleanUp();
-            
+
             return false;
         });
-        
+
         cancelButton.click(function() {
             onCancel(target);
             cleanUp();
-            
+
             return false;
         });
-        
+
         /**
-         * Make sure the tooltip goes away if they close the editor--but only 
+         * Make sure the tooltip goes away if they close the editor--but only
          * this editor, not another one they might open later.
          */
         editorCancelButton.bind('click.' + namespace, function() {
             onCancel(target);
             cleanUp();
         });
-        
+
         target.closest('.qtext_editor_content').bind(
             /* Make sure the tooltip moves if the mention does */
             'keyup.' + namespace, placeTooltip
         ).bind(
             /**
-             * While the prompt is open, make sure they can't edit the mention 
+             * While the prompt is open, make sure they can't edit the mention
              * from the rich-text editor. Any other text is fair game.
              */
             'keydown.' + namespace, function() {
                 var focusedNode = document.getSelection().focusNode,
                     targetIsNode = target.length !== 0;
-                
+
                 if (targetIsNode && getFocusedLink(focusedNode).get(0) === target.get(0)) {
                     return false;
                 }
             }
         );
-        
+
         /* Behavior for the (+) menu */
-        
+
         helpToggle.toggle(
             function() {
                 $(id('help')).slideDown('fast');
                 $(this).text('\u00d7').removeClass(namespace + 'hidden');
-                
+
                 return false;
             },
             function() {
                 $(id('help')).slideUp('fast');
                 $(this).text('+').addClass(namespace + 'hidden');
-                
+
                 return false;
             }
         );
-        
+
         return tooltip;
     }
 })();
